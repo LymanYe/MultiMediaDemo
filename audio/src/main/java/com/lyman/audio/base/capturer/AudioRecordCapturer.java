@@ -29,9 +29,6 @@ public class AudioRecordCapturer implements IAudioCapturer {
     private boolean mIsCaptureStarted = false;
     private volatile boolean mIsLoopExit = false;
 
-    public boolean isCaptureStarted() {
-        return mIsCaptureStarted;
-    }
 
     public void setOnAudioFrameCapturedListener(OnAudioFrameCapturedListener listener) {
         mAudioFrameCapturedListener = listener;
