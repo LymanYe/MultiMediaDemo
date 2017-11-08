@@ -11,33 +11,32 @@
  *  @author  Jhuster
  *  @date    2016/03/13    
  */
-package com.lyman.audio.base.capturer;
+package com.lyman.audio.base.player;
 
-import android.media.AudioFormat;
-import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.util.Log;
+
+import static com.lyman.audio.base.Config.DEFAULT_AUDIO_FORMAT;
+import static com.lyman.audio.base.Config.DEFAULT_CHANNEL_CONFIG;
+import static com.lyman.audio.base.Config.DEFAULT_PLAY_MODE;
+import static com.lyman.audio.base.Config.DEFAULT_SAMPLE_RATE;
+import static com.lyman.audio.base.Config.DEFAULT_STREAM_TYPE;
 
 /**
  * Author: lyman
  * Email: lymenye@gmail.com
- * Date: 2017/11/6
+ * Date: 2017/11/8
  * Description:
  */
-public class AudioPlayer {
+public class AudioTrackPlayer implements IAudioPlayer {
 
-    private static final String TAG = "AudioPlayer";
-
-    private static final int DEFAULT_STREAM_TYPE = AudioManager.STREAM_MUSIC;
-    private static final int DEFAULT_SAMPLE_RATE = 44100;
-    private static final int DEFAULT_CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_STEREO;
-    private static final int DEFAULT_AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
-    private static final int DEFAULT_PLAY_MODE = AudioTrack.MODE_STREAM;
+    private static final String TAG = "AudioTrackPlayer";
 
     private boolean mIsPlayStarted = false;
     private int mMinBufferSize = 0;
     private AudioTrack mAudioTrack;
 
+    @Override
     public boolean startPlayer() {
         return startPlayer(DEFAULT_STREAM_TYPE, DEFAULT_SAMPLE_RATE, DEFAULT_CHANNEL_CONFIG, DEFAULT_AUDIO_FORMAT);
     }
@@ -73,6 +72,7 @@ public class AudioPlayer {
         return mMinBufferSize;
     }
 
+    @Override
     public void stopPlayer() {
 
         if (!mIsPlayStarted) {

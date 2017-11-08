@@ -3,6 +3,8 @@ package com.lyman.audio.base.capturer;
 import android.media.MediaRecorder;
 import android.util.Log;
 
+import com.lyman.audio.base.Config;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -19,11 +21,10 @@ public class MediaRecorderCapturer implements IAudioCapturer {
     private boolean mIsCaptureStarted = false;
     private String mFilePath;
 
+    /**
+     * @param filePath 文件要保存的父目录
+     */
     public MediaRecorderCapturer(String filePath) {
-        File file = new File(filePath);
-        if (file.exists()) {
-            file.delete();
-        }
         mFilePath = filePath;
     }
 
@@ -34,16 +35,26 @@ public class MediaRecorderCapturer implements IAudioCapturer {
             return false;
         }
         try {
+            File file = new File(mFilePath + File.separator +
+                    System.currentTimeMillis() + ".m4a");
+            file.createNewFile();
+            String mAbsoluteFilePath = file.getAbsolutePath();
             if (mMediaRecorder == null) {
                 mMediaRecorder = new MediaRecorder(); // Initial state.
             }
             mMediaRecorder.reset();
+            //设置从麦克风采集数据
             mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-            // Initialized state.
-            mMediaRecorder.setOutputFile(mFilePath);
-            // DataSourceConfigured state.
+            //设置保存文件格式为mp4
+            mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            //设置采样率
+            mMediaRecorder.setAudioSamplingRate(Config.DEFAULT_SAMPLE_RATE);
+            //设置声音数据编码格式音频通用格式为AAC
+            mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+            //设置编码频率
+            mMediaRecorder.setAudioEncodingBitRate(Config.DEFAULT_ENCODING_BITRATE);
+            //设置保存文件路径
+            mMediaRecorder.setOutputFile(mAbsoluteFilePath);
             mMediaRecorder.prepare(); // Prepared state
             mMediaRecorder.start(); // Recording state.
             mIsCaptureStarted = true;
@@ -61,7 +72,10 @@ public class MediaRecorderCapturer implements IAudioCapturer {
             return;
         }
         mIsCaptureStarted = false;
-        mMediaRecorder.stop();
-        mMediaRecorder.release();
+        if (mMediaRecorder != null) {
+            mMediaRecorder.stop();
+            mMediaRecorder.release();
+            mMediaRecorder = null;
+        }
     }
 }

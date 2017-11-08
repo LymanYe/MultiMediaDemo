@@ -1,10 +1,13 @@
 package com.lyman.audio.base.capturer;
 
-import android.media.AudioFormat;
 import android.media.AudioRecord;
-import android.media.MediaRecorder;
 import android.os.SystemClock;
 import android.util.Log;
+
+import static com.lyman.audio.base.Config.DEFAULT_AUDIO_FORMAT;
+import static com.lyman.audio.base.Config.DEFAULT_AUDIO_RECORD_SOURCE;
+import static com.lyman.audio.base.Config.DEFAULT_CHANNEL_CONFIG;
+import static com.lyman.audio.base.Config.DEFAULT_SAMPLE_RATE;
 
 /**
  * Author: lyman
@@ -15,11 +18,6 @@ import android.util.Log;
 
 public class AudioRecordCapturer implements IAudioCapturer {
     private static final String TAG = "AudioRecordCapturer";
-    private static final int DEFAULT_SOURCE = MediaRecorder.AudioSource.MIC;
-    private static final int DEFAULT_SAMPLE_RATE = 44100;
-    private static final int DEFAULT_CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_STEREO;
-    private static final int DEFAULT_AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
-
     private AudioRecord mAudioRecord;
     private OnAudioFrameCapturedListener mAudioFrameCapturedListener;
 
@@ -45,7 +43,7 @@ public class AudioRecordCapturer implements IAudioCapturer {
     }
 
     public boolean startCapture() {
-        return startCapture(DEFAULT_SOURCE, DEFAULT_SAMPLE_RATE, DEFAULT_CHANNEL_CONFIG,
+        return startCapture(DEFAULT_AUDIO_RECORD_SOURCE, DEFAULT_SAMPLE_RATE, DEFAULT_CHANNEL_CONFIG,
                 DEFAULT_AUDIO_FORMAT);
     }
 
@@ -61,6 +59,7 @@ public class AudioRecordCapturer implements IAudioCapturer {
             Log.e(TAG, "Invalid parameter !");
             return false;
         }
+
         Log.d(TAG, "getMinBufferSize = " + mMinBufferSize + " bytes !");
 
         mAudioRecord = new AudioRecord(audioSource, sampleRateInHz, channelConfig, audioFormat, mMinBufferSize);

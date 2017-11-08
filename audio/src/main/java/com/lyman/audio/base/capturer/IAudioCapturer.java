@@ -9,5 +9,6 @@ package com.lyman.audio.base.capturer;
 
 public interface IAudioCapturer {
     boolean startCapturer();
+
     void stopCapturer();
 }
