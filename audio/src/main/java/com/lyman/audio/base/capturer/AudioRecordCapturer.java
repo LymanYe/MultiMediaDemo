@@ -4,6 +4,10 @@ import android.media.AudioRecord;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.lyman.audio.base.wav.WavFileWriter;
+
+import java.io.IOException;
+
 import static com.lyman.audio.base.Config.DEFAULT_AUDIO_FORMAT;
 import static com.lyman.audio.base.Config.DEFAULT_AUDIO_RECORD_SOURCE;
 import static com.lyman.audio.base.Config.DEFAULT_CHANNEL_CONFIG;
@@ -16,7 +20,7 @@ import static com.lyman.audio.base.Config.DEFAULT_SAMPLE_RATE;
  * Description:
  */
 
-public class AudioRecordCapturer implements IAudioCapturer {
+public class AudioRecordCapturer implements IAudioCapturer, OnAudioFrameCapturedListener {
     private static final String TAG = "AudioRecordCapturer";
     private AudioRecord mAudioRecord;
     private OnAudioFrameCapturedListener mAudioFrameCapturedListener;
@@ -27,6 +31,20 @@ public class AudioRecordCapturer implements IAudioCapturer {
     private boolean mIsCaptureStarted = false;
     private volatile boolean mIsLoopExit = false;
 
+    private String mFilePath;
+    private WavFileWriter mWavFileWriter;
+
+    //文件读取的回掉是否要处理
+    private boolean isNeedWavFileHandler;
+
+    public AudioRecordCapturer(String filePath,boolean isNeedCallback) {
+        this.mFilePath = filePath;
+        this.isNeedWavFileHandler = isNeedCallback;
+        if(!isNeedCallback){
+            setOnAudioFrameCapturedListener(this);
+            mWavFileWriter = new WavFileWriter();
+        }
+    }
 
     public void setOnAudioFrameCapturedListener(OnAudioFrameCapturedListener listener) {
         mAudioFrameCapturedListener = listener;
@@ -34,11 +52,24 @@ public class AudioRecordCapturer implements IAudioCapturer {
 
     @Override
     public boolean startCapturer() {
+        if(!isNeedWavFileHandler)
+        try {
+            mWavFileWriter.openFile(mFilePath, 44100, 1, 16);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
         return startCapture();
     }
 
     @Override
     public void stopCapturer() {
+        if(!isNeedWavFileHandler)
+        try {
+            mWavFileWriter.closeFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         stopCapture();
     }
 
@@ -107,8 +138,13 @@ public class AudioRecordCapturer implements IAudioCapturer {
         Log.d(TAG, "Stop audio capture success !");
     }
 
-    private class AudioCaptureRunnable implements Runnable {
+    @Override
+    public void onAudioFrameCaptured(byte[] audioData) {
+        if(mWavFileWriter != null)
+        mWavFileWriter.writeData(audioData, 0, audioData.length);
+    }
 
+    private class AudioCaptureRunnable implements Runnable {
         @Override
         public void run() {
 

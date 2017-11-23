@@ -35,8 +35,7 @@ public class MediaRecorderCapturer implements IAudioCapturer {
             return false;
         }
         try {
-            File file = new File(mFilePath + File.separator +
-                    System.currentTimeMillis() + ".m4a");
+            File file = new File(mFilePath);
             file.createNewFile();
             String mAbsoluteFilePath = file.getAbsolutePath();
             if (mMediaRecorder == null) {
@@ -45,8 +44,8 @@ public class MediaRecorderCapturer implements IAudioCapturer {
             mMediaRecorder.reset();
             //设置从麦克风采集数据
             mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            //设置保存文件格式为mp4
-            mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            //设置保存文件格式为3gp
+            mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
             //设置采样率
             mMediaRecorder.setAudioSamplingRate(Config.DEFAULT_SAMPLE_RATE);
             //设置声音数据编码格式音频通用格式为AAC
