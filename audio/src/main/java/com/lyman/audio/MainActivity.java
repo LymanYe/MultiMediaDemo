@@ -16,11 +16,12 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.lyman.audio.base.capturer.AudioCapturer;
-import com.lyman.audio.base.capturer.AudioRecordCapturer;
 import com.lyman.audio.base.capturer.MediaRecorderCapturer;
+import com.lyman.audio.base.capturer.WavAudioRecordCapturer;
+import com.lyman.audio.base.codec.AudioCodec;
 import com.lyman.audio.base.player.AudioPlayer;
-import com.lyman.audio.base.player.AudioTrackPlayer;
 import com.lyman.audio.base.player.MyMediaPlayer;
+import com.lyman.audio.base.player.WavAudioTrackPlayer;
 
 public class MainActivity extends AppCompatActivity {
     private String[] mPermissions = {Manifest.permission.RECORD_AUDIO};
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AudioCapturer mCapturer;
     private AudioPlayer mPlayer;
+    private AudioCodec mCodec;
 
     private boolean permissionToRecordAccepted = false;
     private String[] permissions = {Manifest.permission.RECORD_AUDIO};
@@ -65,6 +67,23 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    private boolean onCodec(boolean start) {
+        if (start) {
+            return startCodec();
+        } else {
+            stopCodec();
+        }
+        return true;
+    }
+
+    private boolean startCodec() {
+        return mCodec.startCodec();
+    }
+
+    private boolean stopCodec() {
+        return mCodec.stopCodec();
+    }
+
     private boolean startPlaying() {
         return mPlayer.startPlayer();
     }
@@ -92,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
                     if (TextUtils.equals(mFileName, mMediaFileName)) {
                         mCapturer = new AudioCapturer(new MediaRecorderCapturer(mFileName));
                     } else {
-                        mCapturer = new AudioCapturer(new AudioRecordCapturer(mFileName, false));
+                        mCapturer = new AudioCapturer(new WavAudioRecordCapturer(mFileName));
                     }
 
                 }
@@ -125,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
                     if (TextUtils.equals(mFileName, mMediaFileName)) {
                         mPlayer = new AudioPlayer(new MyMediaPlayer(mFileName));
                     } else {
-                        mPlayer = new AudioPlayer(new AudioTrackPlayer(mFileName));
+                        mPlayer = new AudioPlayer(new WavAudioTrackPlayer(mFileName));
                     }
 
                 }
@@ -148,6 +167,35 @@ public class MainActivity extends AppCompatActivity {
             this.mName = name;
             this.mFileName = fileName;
             setText(mName + " Start playing");
+            setOnClickListener(clicker);
+        }
+    }
+
+    class CodecButton extends android.support.v7.widget.AppCompatButton {
+        private boolean mStartCodec = true;
+        OnClickListener clicker = new OnClickListener() {
+            public void onClick(View v) {
+                if (mCodec == null) {
+                    mCodec = new AudioCodec();
+
+                }
+                boolean isStartSuccess = onCodec(mStartCodec);
+                if (!isStartSuccess) {
+                    Toast.makeText(getContext(), "init failed", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (mStartCodec) {
+                    setText(" Stop codec");
+                } else {
+                    setText(" Start codec");
+                }
+                mStartCodec = !mStartCodec;
+            }
+        };
+
+        public CodecButton(Context ctx) {
+            super(ctx);
+            setText(" Start codec");
             setOnClickListener(clicker);
         }
     }
@@ -189,6 +237,13 @@ public class MainActivity extends AppCompatActivity {
 
         PlayButton audioPlayerBtn = new PlayButton(this, "AudioPlayer", mAudioFileName);
         ll.addView(audioPlayerBtn,
+                new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        0));
+
+        CodecButton codecBtn = new CodecButton(this);
+        ll.addView(codecBtn,
                 new LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT,
