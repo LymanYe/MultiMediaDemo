@@ -259,7 +259,6 @@ public class MainActivity extends AppCompatActivity {
             mCapturer.stopCapturer();
             mCapturer = null;
         }
-
         if (mPlayer != null) {
             mPlayer.stopPlayer();
             mPlayer = null;
