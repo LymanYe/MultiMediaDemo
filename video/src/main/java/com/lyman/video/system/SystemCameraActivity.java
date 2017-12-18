@@ -21,5 +21,7 @@ public class SystemCameraActivity extends AppCompatActivity {
     }
 
     public void takeVideo(View view) {
+        Intent intent = new Intent(this, TakeVideoActivity.class);
+        startActivity(intent);
     }
 }
