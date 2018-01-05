@@ -14,15 +14,16 @@ import android.view.SurfaceView;
 
 public class WaterMarkPreview extends SurfaceView {
     public WaterMarkPreview(Context context) {
-        this(context,null);
+        this(context, null);
     }
 
     public WaterMarkPreview(Context context, AttributeSet attrs) {
-        this(context, attrs,0);
+        this(context, attrs, 0);
     }
 
     public WaterMarkPreview(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         getHolder().setFormat(PixelFormat.TRANSPARENT);
+        setZOrderOnTop(true);
     }
 }

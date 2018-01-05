@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.lyman.video.camera.CameraActivity;
+import com.lyman.video.camera2.Camera2Activity;
 import com.lyman.video.system.SystemCameraActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,19 +31,28 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void onShowCamera(View view) {
-        if(!checkCameraHardware()){
-            Toast.makeText(this,"没有摄像头",Toast.LENGTH_SHORT).show();
+        if (!checkCameraHardware()) {
+            Toast.makeText(this, "没有摄像头", Toast.LENGTH_SHORT).show();
             return;
         }
         Intent intent = new Intent(this, CameraActivity.class);
         startActivity(intent);
     }
 
-    private boolean checkCameraHardware(){
-        if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
+    private boolean checkCameraHardware() {
+        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             return true;
-        }else {
+        } else {
             return false;
         }
+    }
+
+    public void onShowCamera2(View view) {
+        if (!checkCameraHardware()) {
+            Toast.makeText(this, "没有摄像头", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Intent intent = new Intent(this, Camera2Activity.class);
+        startActivity(intent);
     }
 }

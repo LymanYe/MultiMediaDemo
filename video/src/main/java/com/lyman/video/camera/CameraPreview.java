@@ -1,5 +1,6 @@
 package com.lyman.video.camera;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,10 +13,14 @@ import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.support.annotation.RequiresApi;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Toast;
@@ -28,6 +33,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -41,7 +49,7 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
  * Date: 2017/12/13
  * Description:
  */
-
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback, Camera.PreviewCallback {
     private static final String TAG = "CameraPreview";
     private SurfaceHolder mHolder;
@@ -52,9 +60,18 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private MediaRecorder mMediaRecorder;
     private boolean mIsAddWaterMark = false;
     private WaterMarkPreview mWaterMarkPreview;
+    private int mDisplayOrientation;
 
     public CameraPreview(Context context) {
-        super(context);
+        this(context, null);
+    }
+
+    public CameraPreview(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public CameraPreview(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
         mContext = context;
         mHolder = getHolder();
         mHolder.setKeepScreenOn(true);
@@ -63,6 +80,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         getDefaultCameraId();
         Log.d(TAG, "CameraPreview: " + Thread.currentThread());
     }
+
 
     public void surfaceCreated(SurfaceHolder holder) {
         Log.d(TAG, "surfaceCreated: ");
@@ -95,48 +113,37 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     private void initCamera(int w, int h) {
-        // set preview size and make any resize, rotate or
-        // reformatting changes here
-        // start preview with new settings
         try {
             mCamera = getCameraInstance();
-
             //设置预览size
             Camera.Parameters parameters = mCamera.getParameters();
             Log.d(TAG, "initCamera: surface width==" + w + ",height==" + h);
-            Camera.Size bestSize = getBestCameraResolution(parameters, w, h);
-//            bestSize.width = 352;
-//            bestSize.height = 288;
+            //Camera.Size bestSize = getBestCameraResolution(parameters, w, h);
+            Camera.Size bestSize = getPreferredPreviewSize(parameters, w, h);
+
             parameters.setPreviewSize(bestSize.width, bestSize.height);
             Log.d(TAG, "initCamera: best size width=="
                     + bestSize.width + ",best size height==" + bestSize.height);
 
-            //设置输出图片尺寸
+            //设置拍照输出图片尺寸
             parameters.setPictureSize(bestSize.width, bestSize.height);
 
             //设置预览方向
-            mCamera.setDisplayOrientation(90);
+            //mCamera.setDisplayOrientation(90);
+            //改善后
+            //setCameraDisplayOrientation((Activity) mContext, mCameraId, mCamera);
+            int rotationDegrees = getCameraDisplayOrientation((Activity) mContext, mCameraId);
+            Log.e(TAG, "initCamera: rotation degrees=" + rotationDegrees);
+            mCamera.setDisplayOrientation(rotationDegrees);
             //设置拍照图片方向
-            parameters.setRotation(90);
+            parameters.setRotation(rotationDegrees);
 
             parameters.setPictureFormat(ImageFormat.NV21);
-
 
             //设置自动对焦
             parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
 
-//            if (parameters.getMaxNumMeteringAreas() > 0){ // check that metering areas are supported
-//                List<Camera.Area> meteringAreas = new ArrayList<Camera.Area>();
-//
-//                Rect areaRect1 = new Rect(-100, -100, 100, 100);    // specify an area in center of image
-//                meteringAreas.add(new Camera.Area(areaRect1, 600)); // set weight to 60%
-//                Rect areaRect2 = new Rect(800, -1000, 1000, -800);  // specify an area in upper right of image
-//                meteringAreas.add(new Camera.Area(areaRect2, 400)); // set weight to 40%
-//                parameters.setMeteringAreas(meteringAreas);
-//            }
-
             mCamera.setFaceDetectionListener(new MyFaceDetectionListener());
-
 
             mCamera.setParameters(parameters);
 
@@ -167,10 +174,12 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             Log.d(TAG, "onPreviewFrame: show water mark");
             try {
                 Camera.Size size = camera.getParameters().getPreviewSize();
+                Log.e(TAG, "onPreviewFrame: preview width=" + size.width + ",height=" + size.height);
                 YuvImage yuvImage = new YuvImage(data, ImageFormat.NV21, size.width, size.height, null);
                 if (yuvImage == null) return;
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                yuvImage.compressToJpeg(new Rect(0, 0, size.width, size.height), 100, stream);
+                yuvImage.compressToJpeg(new Rect(0, 0, mWaterMarkPreview.getHeight(),
+                        mWaterMarkPreview.getWidth()), 100, stream);
                 Bitmap bitmap = BitmapFactory.decodeByteArray(stream.toByteArray(), 0, stream.size());
                 //图片旋转 后置旋转90度，前置旋转270度
                 bitmap = BitmapUtils.rotateBitmap(bitmap, mCameraId == 0 ? 90 : 270);
@@ -224,7 +233,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                         } else if (Math.abs(size.width - targetWidth) < minWidthDiff) {
                             minWidthDiff = size.width - targetWidth;
                             optimalSize = size;
-
                         }
                         minDiff = Math.abs(size.width - targetWidth);
                     }
@@ -242,6 +250,68 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             }
         }
         return optimalSize;
+    }
+
+
+    private Camera.Size getPreferredPreviewSize(Camera.Parameters parameters, int width, int height) {
+        Log.e(TAG, "getPreferredPreviewSize: surface width=" + width + ",surface height=" + height);
+        List<Camera.Size> mapSizes = parameters.getSupportedPreviewSizes();
+        List<Camera.Size> collectorSizes = new ArrayList<>();
+        for (Camera.Size option : mapSizes) {
+            if (width > height) {
+                if (option.width > width &&
+                        option.height > height) {
+                    collectorSizes.add(option);
+                }
+            } else {
+                if (option.width > height &&
+                        option.height > width) {
+                    collectorSizes.add(option);
+                }
+            }
+        }
+        if (collectorSizes.size() > 0) {
+            return Collections.min(collectorSizes, new Comparator<Camera.Size>() {
+                @Override
+                public int compare(Camera.Size lhs, Camera.Size rhs) {
+                    return Long.signum(lhs.width * lhs.height - rhs.width * rhs.height);
+                }
+            });
+        }
+        Log.e(TAG, "getPreferredPreviewSize: best width=" +
+                mapSizes.get(0).width + ",height=" + mapSizes.get(0).height);
+        return mapSizes.get(0);
+    }
+
+    private Camera.Size chooseOptimalSize(List<Camera.Size> sizes) {
+//        if (!isReady()) { // Not yet laid out
+//            return sizes.first(); // Return the smallest size
+//        }
+        int desiredWidth;
+        int desiredHeight;
+        final int surfaceWidth = getWidth();
+        final int surfaceHeight = getHeight();
+        if (isLandscape(mDisplayOrientation)) {
+            desiredWidth = surfaceHeight;
+            desiredHeight = surfaceWidth;
+        } else {
+            desiredWidth = surfaceWidth;
+            desiredHeight = surfaceHeight;
+        }
+        Camera.Size result = null;
+        for (Camera.Size size : sizes) { // Iterate from small to large
+            if (desiredWidth <= size.width && desiredHeight <= size.height) {
+                return size;
+
+            }
+            result = size;
+        }
+        return result;
+    }
+
+    private boolean isLandscape(int orientationDegrees) {
+        return (orientationDegrees == 90 ||
+                orientationDegrees == 270);
     }
 
     /**
@@ -306,12 +376,15 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             Camera.getCameraInfo(i, cameraInfo);
             if (cameraId == Camera.CameraInfo.CAMERA_FACING_BACK &&
                     cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                Log.e(TAG, "checkHaveCameraHardWare: sensor orientation=" + cameraInfo.orientation);
                 result = true;
                 Log.d(TAG, "checkHaveCameraHardWare: have camera back");
             } else if (cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT &&
                     cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
                 result = true;
                 Log.d(TAG, "checkHaveCameraHardWare: have camera front" + cameraId);
+                Log.e(TAG, "checkHaveCameraHardWare: sensor orientation=" + cameraInfo.orientation);
+
             }
         }
         return result;
@@ -321,17 +394,18 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
-
             File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
             if (pictureFile == null) {
                 Log.d(TAG, "Error creating media file, check storage permissions: ");
                 return;
             }
-
             try {
                 FileOutputStream fos = new FileOutputStream(pictureFile);
                 fos.write(data);
                 fos.close();
+                mCamera.startPreview();
+                Toast.makeText(mContext, "picture path is:" + pictureFile.getAbsolutePath(),
+                        Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "onPictureTaken: save take picture image success");
             } catch (FileNotFoundException e) {
                 Log.d(TAG, "File not found: " + e.getMessage());
@@ -362,6 +436,42 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             // camera supports face detection, so can start it:
             mCamera.startFaceDetection();
         }
+    }
+
+    public int getCameraDisplayOrientation(Activity activity, int cameraId) {
+        android.hardware.Camera.CameraInfo info =
+                new android.hardware.Camera.CameraInfo();
+        android.hardware.Camera.getCameraInfo(cameraId, info);
+        int rotation = activity.getWindowManager().getDefaultDisplay()
+                .getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                mDisplayOrientation = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                mDisplayOrientation = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                mDisplayOrientation = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                mDisplayOrientation = 270;
+                break;
+        }
+
+        int result;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360;  // compensate the mirror
+        } else {  // back-facing
+            result = (info.orientation - degrees + 360) % 360;
+        }
+        return result;
     }
 
     private File getOutputMediaFile(int mediaType) {
@@ -506,7 +616,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         return 0;
     }
 
-    public void toggleWaterMark() {
-        mIsAddWaterMark = !mIsAddWaterMark;
+    public boolean toggleWaterMark() {
+        return (mIsAddWaterMark = !mIsAddWaterMark);
     }
 }

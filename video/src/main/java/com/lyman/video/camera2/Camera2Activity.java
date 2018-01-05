@@ -1,4 +1,4 @@
-package com.lyman.video.camera;
+package com.lyman.video.camera2;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -10,26 +10,24 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.lyman.video.R;
+import com.lyman.video.camera.WaterMarkPreview;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-public class CameraActivity extends AppCompatActivity {
+public class Camera2Activity extends AppCompatActivity {
     private static final int REQUEST_CAMERA = 1;
     private static final int REQUEST_RECORD_AUDIO = 2;
-    private CameraPreview mPreview;
+    private Camera2Preview mPreview;
     private WaterMarkPreview mWaterMarkPreview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_camera);
+        setContentView(R.layout.activity_camera2);
         requestPermissions();
-    }
-
-    private void initCameraView() {
-        mPreview = (CameraPreview) findViewById(R.id.camera_preview);
     }
 
     private void requestPermissions() {
@@ -69,11 +67,27 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+
+    private void initCameraView() {
+        // Create our Preview view and set it as the content of our activity.
+        mPreview = new Camera2Preview(this);
+        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+        preview.addView(mPreview);
+        mPreview.setAspectRatio(preview.getWidth(), preview.getHeight());
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mPreview != null)
+            mPreview.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mPreview != null) mPreview.onPause();
+    }
 
     public void switchCamera(View view) {
         mPreview.switchCamera();
@@ -84,18 +98,14 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     public void toggleVideo(View view) {
-        int result = mPreview.toggleVideo();
-        Button button = (Button) view;
-        if (result == 1) {
-            button.setText("开始录制视频");
-        } else if (result == 2) {
-            button.setText("结束录制视频");
+        if (mPreview.toggleVideo()) {
+            ((Button) view).setText("停止录制视频");
         } else {
-
+            ((Button) view).setText("开始录制视频");
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+
     public void toggleWaterMark(View view) {
         if (mWaterMarkPreview == null) {
             mWaterMarkPreview = (WaterMarkPreview) findViewById(R.id.camera_watermark_preview);
