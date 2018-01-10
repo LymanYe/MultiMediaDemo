@@ -40,7 +40,8 @@
 
         <activity android:name=".system.TakeVideoActivity" />
         <activity android:name=".camera.CameraActivity" />
-        <activity android:name=".camera2.Camera2Activity"></activity>
+        <activity android:name=".camera2.Camera2Activity" />
+        <activity android:name=".decompose_compose.DecomposeAndComposeActivity"></activity>
     </application>
 
 </manifest>
