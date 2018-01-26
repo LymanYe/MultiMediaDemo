@@ -41,7 +41,10 @@
         <activity android:name=".system.TakeVideoActivity" />
         <activity android:name=".camera.CameraActivity" />
         <activity android:name=".camera2.Camera2Activity" />
-        <activity android:name=".decompose_compose.DecomposeAndComposeActivity"></activity>
+        <activity android:name=".decompose_compose.DecomposeAndComposeActivity" />
+        <activity android:name=".encode_decode.EncodeAndDecodeActivity" />
+        <activity android:name=".encode_decode.encode.camera2.EncodeYUVToH264Activity2" />
+        <activity android:name=".encode_decode.encode.camera.EncodeYUVToH264Activity"></activity>
     </application>
 
 </manifest>

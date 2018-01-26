@@ -36,4 +36,11 @@
         android:layout_marginTop="50dp"
         android:onClick="decomposeAndComposeVideo"
         android:text="分离合成视频" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:onClick="encodeAndDecodeVideo"
+        android:text="视频编解码" />
 </LinearLayout>

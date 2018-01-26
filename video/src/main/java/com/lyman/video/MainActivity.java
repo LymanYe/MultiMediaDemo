@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.lyman.video.camera.CameraActivity;
 import com.lyman.video.camera2.Camera2Activity;
 import com.lyman.video.decompose_compose.DecomposeAndComposeActivity;
+import com.lyman.video.encode_decode.EncodeAndDecodeActivity;
 import com.lyman.video.system.SystemCameraActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -59,6 +60,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void decomposeAndComposeVideo(View view){
         Intent intent = new Intent(this, DecomposeAndComposeActivity.class);
+        startActivity(intent);
+    }
+
+    public void encodeAndDecodeVideo(View view){
+        Intent intent = new Intent(this, EncodeAndDecodeActivity.class);
         startActivity(intent);
     }
 }

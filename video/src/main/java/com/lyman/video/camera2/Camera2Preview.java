@@ -640,7 +640,6 @@ public class Camera2Preview extends TextureView {
         return choices[choices.length - 1];
     }
 
-
     private void stopRecordingVideo() {
         // Stop recording
         mMediaRecorder.stop();
@@ -804,7 +803,7 @@ public class Camera2Preview extends TextureView {
      * @param mediaType
      * @return
      */
-    private File getOutputMediaFile(int mediaType) {
+    public File getOutputMediaFile(int mediaType) {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String fileName = null;
         File storageDir = null;
