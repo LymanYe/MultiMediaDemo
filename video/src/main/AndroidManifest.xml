@@ -44,7 +44,9 @@
         <activity android:name=".decompose_compose.DecomposeAndComposeActivity" />
         <activity android:name=".encode_decode.EncodeAndDecodeActivity" />
         <activity android:name=".encode_decode.encode.camera2.EncodeYUVToH264Activity2" />
-        <activity android:name=".encode_decode.encode.camera.EncodeYUVToH264Activity"></activity>
+        <activity android:name=".encode_decode.encode.camera.EncodeYUVToH264Activity" />
+        <activity android:name=".encode_decode.decode.DecodeH264ToSurfaceViewActivity" />
+        <activity android:name=".encode_decode.decode.DecodeH264ToTextureViewActivity"></activity>
     </application>
 
 </manifest>

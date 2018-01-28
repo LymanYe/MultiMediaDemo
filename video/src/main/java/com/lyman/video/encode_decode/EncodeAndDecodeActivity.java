@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.lyman.video.R;
+import com.lyman.video.encode_decode.decode.DecodeH264ToSurfaceViewActivity;
+import com.lyman.video.encode_decode.decode.DecodeH264ToTextureViewActivity;
 import com.lyman.video.encode_decode.encode.camera.EncodeYUVToH264Activity;
 import com.lyman.video.encode_decode.encode.camera2.EncodeYUVToH264Activity2;
 
@@ -26,5 +28,16 @@ public class EncodeAndDecodeActivity extends AppCompatActivity {
         Intent intent = new Intent(this, EncodeYUVToH264Activity2.class);
         startActivity(intent);
     }
+
+    public void decodeVideo(View view) {
+        Intent intent = new Intent(this, DecodeH264ToSurfaceViewActivity.class);
+        startActivity(intent);
+    }
+
+    public void decodeVideoToTextureView(View view) {
+        Intent intent = new Intent(this, DecodeH264ToTextureViewActivity.class);
+        startActivity(intent);
+    }
+
 
 }
