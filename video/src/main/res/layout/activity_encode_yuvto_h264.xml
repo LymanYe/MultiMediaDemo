@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.lyman.video.encode_decode.encode.camera2.EncodeYUVToH264Activity2">
+    tools:context="com.lyman.video.video_encode_decode.encode.camera2.EncodeYUVToH264Activity2">
     <FrameLayout
         android:id="@+id/camera_preview"
         android:layout_width="match_parent"

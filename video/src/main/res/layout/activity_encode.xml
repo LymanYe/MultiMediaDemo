@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.lyman.video.encode_decode.encode.camera.EncodeActivity">
+    tools:context="com.lyman.video.video_encode_decode.encode.camera.EncodeActivity">
     <SurfaceView
         android:id="@+id/surfaceview"
         android:layout_width="match_parent"

@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ffmpeg_cmake</string>
+    <string name="title_activity_basic_info">BasicInfoActivity</string>
+</resources>

@@ -11,14 +11,14 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:onClick="onShowSystemApp"
         android:text="调用系统App" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:onClick="onShowCamera"
         android:text="Camera相机"
         app:layout_constraintTop_toBottomOf="@+id/button" />
@@ -26,21 +26,28 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:onClick="onShowCamera2"
         android:text="Camera2相机" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:onClick="decomposeAndComposeVideo"
         android:text="分离合成视频" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:onClick="encodeAndDecodeVideo"
         android:text="视频编解码" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:onClick="encodeAndDecodeVideoAndAudio"
+        android:text="音视频混合编解码" />
 </LinearLayout>

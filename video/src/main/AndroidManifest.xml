@@ -42,11 +42,13 @@
         <activity android:name=".camera.CameraActivity" />
         <activity android:name=".camera2.Camera2Activity" />
         <activity android:name=".decompose_compose.DecomposeAndComposeActivity" />
-        <activity android:name=".encode_decode.EncodeAndDecodeActivity" />
-        <activity android:name=".encode_decode.encode.camera2.EncodeYUVToH264Activity2" />
-        <activity android:name=".encode_decode.encode.camera.EncodeYUVToH264Activity" />
-        <activity android:name=".encode_decode.decode.DecodeH264ToSurfaceViewActivity" />
-        <activity android:name=".encode_decode.decode.DecodeH264ToTextureViewActivity"></activity>
+        <activity android:name=".video_encode_decode.EncodeAndDecodeActivity" />
+        <activity android:name=".video_encode_decode.encode.camera2.EncodeYUVToH264Activity2" />
+        <activity android:name=".video_encode_decode.encode.camera.EncodeYUVToH264Activity" />
+        <activity android:name=".video_encode_decode.decode.DecodeH264ToSurfaceViewActivity" />
+        <activity android:name=".video_encode_decode.decode.DecodeH264ToTextureViewActivity" />
+        <activity android:name=".video_audio_encode_decode.encode.EncodeToMP4Activity" />
+        <activity android:name=".video_audio_encode_decode.EncodeAndDecodeVideoAndAudioActivity"></activity>
     </application>
 
 </manifest>
