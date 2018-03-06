@@ -19,7 +19,8 @@
         <activity
             android:name=".BasicInfoActivity"
             android:label="@string/title_activity_basic_info"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".DecodeActivity"></activity>
     </application>
 
 </manifest>

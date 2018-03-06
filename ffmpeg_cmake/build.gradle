@@ -35,7 +35,10 @@ android {
         }
     }
 
+
+
     packagingOptions {
+        pickFirst 'lib/armeabi-v7a/libdecode-lib.so'
         pickFirst 'lib/armeabi-v7a/libnative-lib.so'
     }
 }

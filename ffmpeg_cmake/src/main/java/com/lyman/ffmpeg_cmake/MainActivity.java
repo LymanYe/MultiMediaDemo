@@ -17,4 +17,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, BasicInfoActivity.class);
         startActivity(intent);
     }
+
+    public void onClickDecode(View view) {
+        Intent intent = new Intent(this, DecodeActivity.class);
+        startActivity(intent);
+    }
 }
