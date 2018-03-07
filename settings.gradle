@@ -1,1 +1,1 @@
-include ':app', ':audio', ':video', ':ffmpeg', ':ffmpeg_cmake'
+include ':app', ':audio', ':video', ':ffmpeg', ':ffmpeg_cmake', ':ffmpeg_cmake_single'
