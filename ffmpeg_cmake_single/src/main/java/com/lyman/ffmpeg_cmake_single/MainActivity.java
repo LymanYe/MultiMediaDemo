@@ -18,4 +18,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void onClickPushStream(View view) {
+        Intent intent = new Intent(this, StreamerActivity.class);
+        startActivity(intent);
+    }
+
 }

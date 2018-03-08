@@ -13,6 +13,13 @@ add_library( # Sets the name of the library.
              # Provides a relative path to your source file(s).
              src/main/cpp/basicinfo-lib.c)
 
+add_library( # Sets the name of the library.
+             streamer-lib
+             # Sets the library as a shared library.
+             SHARED
+             # Provides a relative path to your source file(s).
+             src/main/cpp/streamer-lib.c)
+
 #第三方so存放的根目录
 SET(
     third_path
@@ -35,7 +42,18 @@ set_target_properties(libffmpeg
 )
 
 
+find_library( # Sets the name of the path variable.
+               log-lib
+               # Specifies the name of the NDK library that
+               # you want CMake to locate.
+               log )
+
 target_link_libraries(
                        basicinfo-lib
+                       libffmpeg
+                       ${log-lib})
+
+target_link_libraries(
+                       streamer-lib
                        libffmpeg
                        ${log-lib})

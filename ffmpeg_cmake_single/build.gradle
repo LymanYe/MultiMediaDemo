@@ -39,6 +39,7 @@ android {
 
     packagingOptions {
         pickFirst 'lib/armeabi-v7a/libbasicinfo-lib.so'
+        pickFirst 'lib/armeabi-v7a/libstreamer-lib.so'
     }
 
 }
