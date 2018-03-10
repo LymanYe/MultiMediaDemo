@@ -20,6 +20,17 @@ add_library( # Sets the name of the library.
              # Provides a relative path to your source file(s).
              src/main/cpp/streamer-lib.c)
 
+add_library( # Sets the name of the library.
+             ffmpeginvoke
+             # Sets the library as a shared library.
+             SHARED
+             # Provides a relative path to your source file(s).
+             src/main/cpp/include/cmdutils.c
+             src/main/cpp/include/ffmpeg.c
+             src/main/cpp/include/ffmpeg_filter.c
+             src/main/cpp/include/ffmpeg_opt.c
+             src/main/cpp/ffmpeginvoke.c)
+
 #第三方so存放的根目录
 SET(
     third_path
@@ -55,5 +66,10 @@ target_link_libraries(
 
 target_link_libraries(
                        streamer-lib
+                       libffmpeg
+                       ${log-lib})
+
+target_link_libraries(
+                       ffmpeginvoke
                        libffmpeg
                        ${log-lib})

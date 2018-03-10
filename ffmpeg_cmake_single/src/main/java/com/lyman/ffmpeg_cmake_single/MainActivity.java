@@ -23,4 +23,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void onClickStartCommand(View view) {
+        Intent intent = new Intent(this, CommandLineActivity.class);
+        startActivity(intent);
+    }
 }
