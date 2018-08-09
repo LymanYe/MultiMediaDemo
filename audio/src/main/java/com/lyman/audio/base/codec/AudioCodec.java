@@ -74,6 +74,7 @@ public class AudioCodec implements IAudioCodec, AudioEncoder.OnAudioEncodedListe
     public boolean stopCodec() {
         mIsCodecExit = true;
         mAudioCapturer.stopCapturer();
+        mAudioCapturer = null;
         return true;
     }
 

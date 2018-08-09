@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(icicle);
 
         mMediaFileName = getExternalCacheDir().getAbsolutePath() + "/audiorecordtest.3gp";
-        mAudioFileName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/audiorecordtest.wav";
+        mAudioFileName = getExternalCacheDir().getAbsolutePath() + "/audiorecordtest.wav";
 
         if (ContextCompat.checkSelfPermission(this, mPermissions[0])
                 != PackageManager.PERMISSION_GRANTED)

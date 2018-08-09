@@ -39,10 +39,17 @@ public class MyMediaPlayer implements IAudioPlayer {
                 return true;
             }
         });
+        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mIsPlayStarted = false;
+            }
+        });
         try {
             mMediaPlayer.prepare();
             mMediaPlayer.start();
             mIsPlayStarted = true;
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
         }

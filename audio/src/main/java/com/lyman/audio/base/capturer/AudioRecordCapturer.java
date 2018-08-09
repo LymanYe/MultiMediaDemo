@@ -65,10 +65,13 @@ public class AudioRecordCapturer implements IAudioCapturer {
             mAudioRecord.stop();
         }
         mAudioRecord.release();
+        mAudioRecord = null;
         Log.d(TAG, "Stop audio capture success !");
     }
 
     public int capture(@NonNull byte[] audioData, int offsetInBytes, int sizeInBytes) {
+        if(audioData == null || audioData.length == 0 || mAudioRecord == null)return -1;
+
         return mAudioRecord.read(audioData, offsetInBytes, sizeInBytes);
     }
 }
